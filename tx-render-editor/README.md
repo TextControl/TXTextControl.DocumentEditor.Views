@@ -1,8 +1,8 @@
-# TX Text Control Document Editor - Layout Integration Patterns
+﻿# TX Text Control Document Editor - Layout Integration Patterns
 
 This project demonstrates **5 professional layout patterns** for integrating the TX Text Control Document Editor into ASP.NET Core MVC applications. Each pattern is designed for specific use cases and provides a complete, copy-paste-ready implementation.
 
-## ?? Table of Contents
+## 📚 Table of Contents
 
 - [Overview](#overview)
 - [Project Setup](#project-setup)
@@ -20,11 +20,11 @@ This project demonstrates **5 professional layout patterns** for integrating the
 ## Overview
 
 All examples are **self-contained** - each view includes:
-- ? Complete HTML structure (`<!DOCTYPE>`, `<html>`, `<head>`, `<body>`)
-- ? Embedded CSS styles (no external stylesheets needed)
-- ? Embedded JavaScript (no external JS files needed)
-- ? Local resource references (Bootstrap Icons)
-- ? TX Text Control integration code
+- 🧱 Complete HTML structure (`<!DOCTYPE>`, `<html>`, `<head>`, `<body>`)
+- 🎨 Embedded CSS styles (no external stylesheets needed)
+- ⚙️ Embedded JavaScript (no external JS files needed)
+- 📦 Local resource references (Bootstrap Icons)
+- 🧩 TX Text Control integration code
 
 **Technology Stack:**
 - ASP.NET Core MVC (.NET 10)
@@ -567,12 +567,12 @@ All views use the same Razor syntax:
 
 **Examples:**
 ```css
-/* ? GOOD */
+/* ✅ GOOD */
 height: 500px;
 height: calc(100vh - 200px);
 height: 100%;  /* Only if parent has explicit height */
 
-/* ? BAD */
+/* ❌ BAD */
 height: auto;   /* Will not work */
 height: 100%;   /* Without explicit parent height */
 ```
@@ -614,25 +614,25 @@ TXTextControl.focus();
 ## Best Practices
 
 ### 1. Container Sizing
-? **Always use explicit heights**
+✅ **Always use explicit heights**
 ```css
 #editor { height: calc(100vh - 100px); }
 ```
 
-? **Avoid auto or undefined heights**
+❌ **Avoid auto or undefined heights**
 ```css
 #editor { height: auto; }  /* Won't work */
 ```
 
 ### 2. Dynamic Layouts
 
-? **TX Text Control handles layout automatically**
+✅ **TX Text Control handles layout automatically**
 ```javascript
 // No manual refresh needed - editor adapts automatically
 sidebarOverlay.classList.add('show');
 ```
 
-? **Don't use unnecessary refreshLayout() calls**
+❌ **Don't use unnecessary refreshLayout() calls**
 ```javascript
 // Not needed in modern implementations
 TXTextControl.refreshLayout();  // Unnecessary
@@ -640,13 +640,13 @@ TXTextControl.refreshLayout();  // Unnecessary
 
 ### 3. Singleton Pattern
 
-? **Move single instance in DOM**
+✅ **Move single instance in DOM**
 ```javascript
 // Tabbed view approach
 editorWrapper.appendChild(editorContainer);
 ```
 
-? **Don't create multiple instances**
+❌ **Don't create multiple instances**
 ```html
 <!-- Licensing and performance issues -->
 <div id="tab1">@Html.TXTextControl()...</div>
@@ -655,7 +655,7 @@ editorWrapper.appendChild(editorContainer);
 
 ### 4. Async Callbacks
 
-? **Chain operations properly**
+✅ **Chain operations properly**
 ```javascript
 TXTextControl.saveDocument(streamType, function(e) {
     tabDocuments[id] = e.data;
@@ -663,7 +663,7 @@ TXTextControl.saveDocument(streamType, function(e) {
 });
 ```
 
-? **Don't assume synchronous**
+❌ **Don't assume synchronous**
 ```javascript
 TXTextControl.saveDocument(streamType, callback);
 switchTabs();  // May execute before save completes
@@ -671,7 +671,7 @@ switchTabs();  // May execute before save completes
 
 ### 5. Self-Contained Views
 
-? **Each view includes everything**
+✅ **Each view includes everything**
 ```razor
 <!DOCTYPE html>
 <html>
@@ -875,6 +875,6 @@ This project serves as example code for integrating TX Text Control Document Edi
 
 ---
 
-**Created with ?? using TX Text Control Document Editor**
+**Created with ❤️ using TX Text Control Document Editor**
 
 *Last Updated: 2026*
