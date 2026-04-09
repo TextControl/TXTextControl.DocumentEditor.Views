@@ -1,0 +1,472 @@
+@using TXTextControl.Web.MVC
+
+@{
+    ViewData["Title"] = "Tabbed Document Editor";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+        .header {
+            height: 60px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .floating-back-btn {
+            padding: 8px 16px;
+            background-color: rgba(52, 152, 219, 0.95);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .floating-back-btn:hover {
+            background-color: rgba(41, 128, 185, 0.95);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .tabs-container {
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+        .tabs-header {
+            display: flex;
+            background-color: #ecf0f1;
+            border-bottom: 2px solid #bdc3c7;
+            padding: 0 10px;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        .tab {
+            padding: 12px 24px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        .tab:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #2c3e50;
+        }
+        .tab.active {
+            background-color: white;
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        .tab .close-btn {
+            margin-left: 8px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            line-height: 1;
+        }
+        .tab .close-btn:hover {
+            opacity: 1;
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        .new-tab-btn {
+            padding: 12px 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+        }
+        .new-tab-btn:hover {
+            color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        .tabs-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .tab-pane {
+            display: none;
+            height: 100%;
+            width: 100%;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .editor-wrapper {
+            height: 100%;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #text-control-container {
+            height: 100%;
+            width: 100%;
+            padding: 1em;
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+        #text-control-container.fading {
+            opacity: 0;
+        }
+        .placeholder-content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #95a5a6;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .placeholder-content i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        .placeholder-content p {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .tab-badge {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="bi bi-folder2-open"></i> Tabbed Document Editor</h1>
+        <a href="@Url.Action("Index", "Home")" class="floating-back-btn">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Overview</span>
+        </a>
+    </div>
+
+    <div class="tabs-container">
+        <div class="tabs-header" id="tabsHeader">
+            <button class="tab active" data-tab-id="1">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Document 1</span>
+                <span class="close-btn" onclick="closeTab(event, 1)">×</span>
+            </button>
+            <button class="tab" data-tab-id="2">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Document 2</span>
+                <span class="close-btn" onclick="closeTab(event, 2)">×</span>
+            </button>
+            <button class="tab" data-tab-id="3">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Document 3</span>
+                <span class="close-btn" onclick="closeTab(event, 3)">×</span>
+            </button>
+            <button class="new-tab-btn" onclick="addNewTab()" title="New Document">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+
+        <div class="tabs-content" id="tabsContent">
+            <div class="tab-pane active" data-tab-id="1">
+                <div class="editor-wrapper">
+                    <div id="text-control-container">
+                        @Html.TXTextControl().TextControl(settings => {
+                            settings.Dock = TXTextControl.Web.DockStyle.Fill;
+                        }).Render()
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" data-tab-id="2">
+                <div class="placeholder-content">
+                    <i class="bi bi-file-earmark"></i>
+                    <p>Document 2 - Click to activate</p>
+                </div>
+            </div>
+            <div class="tab-pane" data-tab-id="3">
+                <div class="placeholder-content">
+                    <i class="bi bi-file-earmark"></i>
+                    <p>Document 3 - Click to activate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tabCounter = 3;
+        let activeTabId = 1;
+        const editorContainer = document.getElementById('text-control-container');
+        
+        // Storage for tab documents and positions
+        const tabDocuments = {};
+        const tabPositions = {};
+
+        // Initialize tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            if (!tab.classList.contains('new-tab-btn')) {
+                tab.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('close-btn')) {
+                        const tabId = parseInt(this.dataset.tabId);
+                        switchTab(tabId);
+                    }
+                });
+            }
+        });
+
+        function switchTab(tabId) {
+            if (activeTabId === tabId) return;
+
+            // Fade out the editor first
+            editorContainer.classList.add('fading');
+
+            // Wait for fade out, then save and switch
+            setTimeout(() => {
+                // Save current document before switching
+                saveCurrentDocument(activeTabId, function() {
+                    // Deactivate current tab
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+                    // Activate new tab
+                    const newTab = document.querySelector(`.tab[data-tab-id="${tabId}"]`);
+                    const newPane = document.querySelector(`.tab-pane[data-tab-id="${tabId}"]`);
+                    
+                    if (newTab && newPane) {
+                        newTab.classList.add('active');
+                        newPane.classList.add('active');
+
+                        // Load document for the new tab and move editor
+                        loadDocumentForTab(tabId, newPane);
+                        
+                        activeTabId = tabId;
+                        console.log(`Switched to tab ${tabId}`);
+                    }
+                });
+            }, 200); // Match the CSS transition duration
+        }
+
+        function saveCurrentDocument(tabId, callback) {
+            // First, save the current cursor position
+            TXTextControl.inputPosition.getTextPosition(function(position) {
+                tabPositions[tabId] = position;
+                console.log(`Saved position for tab ${tabId}:`, position);
+                
+                // Then save the document content
+                TXTextControl.saveDocument(TXTextControl.StreamType.InternalUnicodeFormat, function(e) {
+                    tabDocuments[tabId] = e.data;
+                    console.log(`Saved document for tab ${tabId}`);
+                    if (callback) callback();
+                });
+            });
+        }
+
+        function loadDocumentForTab(tabId, targetPane) {
+            // Remove placeholder if it exists
+            const placeholder = targetPane.querySelector('.placeholder-content');
+            if (placeholder) {
+                placeholder.remove();
+            }
+
+            // Ensure the pane has an editor wrapper
+            let editorWrapper = targetPane.querySelector('.editor-wrapper');
+            if (!editorWrapper) {
+                editorWrapper = document.createElement('div');
+                editorWrapper.className = 'editor-wrapper';
+                targetPane.appendChild(editorWrapper);
+            }
+
+            // Check if there's a saved document for this tab
+            const savedDocument = tabDocuments[tabId];
+            const savedPosition = tabPositions[tabId];
+
+            if (savedDocument) {
+                // Load the saved document
+                TXTextControl.loadDocument(TXTextControl.StreamType.InternalUnicodeFormat, savedDocument, function() {
+                    // Move editor and fade in
+                    editorWrapper.appendChild(editorContainer);
+                    setTimeout(() => {
+                        editorContainer.classList.remove('fading');
+                        
+                        // Restore cursor position if it exists
+                        if (savedPosition) {
+                            restorePosition(tabId, savedPosition);
+                        } else {
+                            // No saved position, just set focus
+                            TXTextControl.focus();
+                            console.log(`Set focus for tab ${tabId} (no saved position)`);
+                        }
+                    }, 50);
+                    console.log(`Loaded document for tab ${tabId}`);
+                });
+            } else {
+                // Reset contents for new/empty tab
+                TXTextControl.resetContents(function() {
+                    // Move editor and fade in
+                    editorWrapper.appendChild(editorContainer);
+                    setTimeout(() => {
+                        editorContainer.classList.remove('fading');
+                        // Set focus for new tab
+                        TXTextControl.focus();
+                        console.log(`Reset contents and set focus for tab ${tabId}`);
+                    }, 50);
+                });
+            }
+        }
+
+        function restorePosition(tabId, position) {
+            // Set the input position
+            TXTextControl.setInputPositionByTextPosition(position, TXTextControl.TextFieldPosition.OutsideTextField, function() {
+                // Scroll to the position
+                TXTextControl.inputPosition.scrollTo(TXTextControl.InputPosition.ScrollPosition.Top, function() {
+                    // Set focus to the editor
+                    TXTextControl.focus();
+                    console.log(`Restored position and focus for tab ${tabId}:`, position);
+                });
+            });
+        }
+
+        function closeTab(event, tabId) {
+            event.stopPropagation();
+            
+            const tabButton = document.querySelector(`.tab[data-tab-id="${tabId}"]`);
+            const tabPane = document.querySelector(`.tab-pane[data-tab-id="${tabId}"]`);
+            
+            if (!tabButton || !tabPane) return;
+
+            // Don't allow closing the last tab
+            const remainingTabs = document.querySelectorAll('.tab:not(.new-tab-btn)');
+            if (remainingTabs.length <= 1) {
+                alert('Cannot close the last tab');
+                return;
+            }
+
+            // If closing active tab, switch to another tab first
+            if (tabId === activeTabId) {
+                const allTabs = Array.from(remainingTabs);
+                const currentIndex = allTabs.findIndex(t => parseInt(t.dataset.tabId) === tabId);
+                const nextTab = allTabs[currentIndex + 1] || allTabs[currentIndex - 1];
+                
+                if (nextTab) {
+                    switchTab(parseInt(nextTab.dataset.tabId));
+                }
+            }
+
+            // Remove saved document and position from storage
+            delete tabDocuments[tabId];
+            delete tabPositions[tabId];
+
+            // Remove tab and pane
+            tabButton.remove();
+            tabPane.remove();
+            
+            console.log(`Closed tab ${tabId}`);
+        }
+
+        function addNewTab() {
+            tabCounter++;
+            const newTabId = tabCounter;
+
+            // Create new tab button
+            const newTabBtn = document.createElement('button');
+            newTabBtn.className = 'tab';
+            newTabBtn.dataset.tabId = newTabId;
+            newTabBtn.innerHTML = `
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Document ${newTabId}</span>
+                <span class="tab-badge">New</span>
+                <span class="close-btn" onclick="closeTab(event, ${newTabId})">×</span>
+            `;
+            newTabBtn.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('close-btn')) {
+                    switchTab(newTabId);
+                }
+            });
+
+            // Create new tab pane
+            const newPane = document.createElement('div');
+            newPane.className = 'tab-pane';
+            newPane.dataset.tabId = newTabId;
+            newPane.innerHTML = `
+                <div class="placeholder-content">
+                    <i class="bi bi-file-earmark-plus"></i>
+                    <p>Document ${newTabId} - Click to activate</p>
+                </div>
+            `;
+
+            // Insert tab before the "+" button
+            const newTabButton = document.querySelector('.new-tab-btn');
+            tabsHeader.insertBefore(newTabBtn, newTabButton);
+            
+            // Add pane to content
+            document.getElementById('tabsContent').appendChild(newPane);
+
+            // Switch to the new tab
+            switchTab(newTabId);
+            
+            console.log(`Created new tab ${newTabId}`);
+        }
+
+        // TX Text Control initialization
+        TXTextControl.addEventListener("textControlLoaded", function() {
+            console.log("TX Text Control is ready - Tabbed View Mode");
+        });
+    </script>
+</body>
+</html>

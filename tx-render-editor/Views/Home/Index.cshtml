@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "TX Text Control Document Editor - Layout Examples";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">TX Text Control Document Editor</h1>
+        <p class="lead">Explore different layout integration options</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-arrows-fullscreen"></i> Full Screen
+                    </h5>
+                    <p class="card-text">
+                        The document editor takes up the full viewport with centered content. 
+                        Perfect for focused document editing with maximum screen real estate.
+                    </p>
+                    <a href="@Url.Action("FullScreen", "Home")" class="btn btn-primary">
+                        View Full Screen Layout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-layout-sidebar"></i> Sidebar Panel
+                    </h5>
+                    <p class="card-text">
+                        The editor appears in a slide-out sidebar panel from the left covering 75% of the screen. 
+                        Ideal for side-by-side workflows or when you need to maintain context with other content.
+                    </p>
+                    <a href="@Url.Action("Sidebar", "Home")" class="btn btn-primary">
+                        View Sidebar Layout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-window"></i> Modal Popup
+                    </h5>
+                    <p class="card-text">
+                        The editor opens in a centered modal dialog with the same elegant styling.
+                        Perfect for quick edits without leaving the current page context.
+                    </p>
+                    <a href="@Url.Action("Modal", "Home")" class="btn btn-primary">
+                        View Modal Layout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-layout-split"></i> Split Panel
+                    </h5>
+                    <p class="card-text">
+                        The editor is in the right panel of a resizable split-pane layout. 
+                        Perfect for displaying related content, properties, or navigation alongside the editor.
+                    </p>
+                    <a href="@Url.Action("SplitPanel", "Home")" class="btn btn-primary">
+                        View Split Panel Layout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-folder2-open"></i> Tabbed Documents
+                    </h5>
+                    <p class="card-text">
+                        Multiple document tabs with a single editor instance that moves between tabs.
+                        Perfect for multi-document workflows like IDEs or modern browsers.
+                    </p>
+                    <a href="@Url.Action("TabbedView", "Home")" class="btn btn-primary">
+                        View Tabbed Layout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-5" role="alert">
+        <h5 class="alert-heading">About These Examples</h5>
+        <p>
+            Each layout demonstrates a different integration approach for the TX Text Control Document Editor 
+            in ASP.NET Core MVC applications. All examples use the same underlying TX Text Control components 
+            but with different CSS and layout strategies.
+        </p>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>

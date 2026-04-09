@@ -1,0 +1,279 @@
+@using TXTextControl.Web.MVC
+
+@{
+    ViewData["Title"] = "Sidebar Editor";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            color: white;
+            font-size: 1.1rem;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .display-4 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+        .lead {
+            font-size: 1.25rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .card p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .card ul {
+            padding-left: 1.5rem;
+        }
+        .card li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        .card li strong {
+            color: #333;
+        }
+        .mb-4 {
+            margin-bottom: 2rem;
+        }
+        .mt-5 {
+            margin-top: 3rem;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: none;
+        }
+        .sidebar-overlay.show {
+            display: block !important;
+            opacity: 1;
+        }
+        .sidebar-container {
+            position: fixed;
+            top: 0;
+            left: -75%;
+            width: 75%;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-overlay.show .sidebar-container {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: white;
+        }
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+        }
+        .close-btn {
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .close-btn:hover {
+            background-color: #c0392b;
+        }
+        #sidebar-text-control-container {
+            flex: 1;
+            width: calc(100% - 3rem);
+            height: calc(100vh - 100px);
+            margin: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="mb-4">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Overview
+            </a>
+        </div>
+
+        <div class="text-center">
+            <h1 class="display-4 mb-4">Sidebar Editor Layout</h1>
+            <p class="lead mb-4">
+                Click the button below to open the TX Text Control Document Editor in a sidebar panel 
+                that slides in from the left covering 75% of the screen.
+            </p>
+            <button class="btn btn-primary" id="openSidebarBtn">
+                <i class="bi bi-layout-sidebar"></i> Open Sidebar Editor
+            </button>
+        </div>
+
+        <div class="card">
+            <h5 class="card-title">About Sidebar Layout</h5>
+            <p>
+                The sidebar layout provides a slide-out panel that covers 75% of the screen width, 
+                allowing users to edit documents while maintaining some context with the main page.
+            </p>
+            <ul>
+                <li><strong>Slide-in Animation:</strong> Smooth transition from the left</li>
+                <li><strong>75% Screen Coverage:</strong> Large editing area while preserving context</li>
+                <li><strong>Dark Overlay:</strong> Focuses attention on the editor</li>
+                <li><strong>Multiple Close Options:</strong> Close button, click outside, or press Escape</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Sidebar Editor -->
+    <div class="sidebar-overlay" id="sidebarOverlay">
+        <div class="sidebar-container" id="sidebarContainer">
+            <div class="sidebar-header">
+                <h1><i class="bi bi-layout-sidebar"></i> TX Text Control - Sidebar Editor</h1>
+                <button class="close-btn" id="closeSidebarBtn">
+                    <i class="bi bi-x-lg"></i> Close
+                </button>
+            </div>
+
+            <div id="sidebar-text-control-container">
+                @Html.TXTextControl().TextControl(settings => {
+                    settings.Dock = TXTextControl.Web.DockStyle.Fill;
+                }).Render()
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const openSidebarBtn = document.getElementById('openSidebarBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+
+        openSidebarBtn.addEventListener('click', function() {
+            sidebarOverlay.style.display = 'block';
+            setTimeout(() => {
+                sidebarOverlay.classList.add('show');
+            }, 10);
+        });
+
+        closeSidebarBtn.addEventListener('click', function() {
+            closeSidebar();
+        });
+
+        // Close sidebar when clicking outside
+        sidebarOverlay.addEventListener('click', function(e) {
+            if (e.target === sidebarOverlay) {
+                closeSidebar();
+            }
+        });
+
+        // Prevent closing when clicking inside sidebar
+        sidebarContainer.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Close sidebar with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebarOverlay.classList.contains('show')) {
+                closeSidebar();
+            }
+        });
+
+        function closeSidebar() {
+            sidebarOverlay.classList.remove('show');
+            setTimeout(() => {
+                sidebarOverlay.style.display = 'none';
+            }, 300);
+        }
+
+        TXTextControl.addEventListener("textControlLoaded", function() {
+            console.log("TX Text Control Sidebar is ready");
+        });
+    </script>
+</body>
+</html>

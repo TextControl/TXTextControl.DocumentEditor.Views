@@ -1,0 +1,91 @@
+@using TXTextControl.Web.MVC
+
+@{
+    ViewData["Title"] = "Full Screen Editor";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #f5f5f5;
+        }
+        .container {
+            margin: 2rem;
+            padding: 1rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            background-color: white;
+            border-radius: 8px;
+            max-width: calc(100% - 4rem);
+            height: calc(100vh - 4rem);
+            overflow-y: auto;
+            position: relative;
+        }
+        #text-control-container {
+            height: calc(100vh - 6rem);
+            width: 100%;
+        }
+        .floating-back-btn {
+            position: fixed;
+            top: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            background-color: rgba(52, 152, 219, 0.95);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .floating-back-btn:hover {
+            background-color: rgba(41, 128, 185, 0.95);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        .floating-back-btn:active {
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <a href="@Url.Action("Index", "Home")" class="floating-back-btn">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to Overview</span>
+    </a>
+
+    <div class="container">
+        <div id="text-control-container">
+            @Html.TXTextControl().TextControl(settings => {
+                settings.Dock = TXTextControl.Web.DockStyle.Fill;
+            }).Render()
+        </div>
+    </div>
+
+    <script>
+        TXTextControl.addEventListener("textControlLoaded", function() {
+            console.log("TX Text Control is ready - Full Screen Mode");
+        });
+    </script>
+</body>
+</html>

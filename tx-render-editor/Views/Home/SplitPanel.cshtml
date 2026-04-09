@@ -1,0 +1,286 @@
+﻿@using TXTextControl.Web.MVC
+
+@{
+    ViewData["Title"] = "Split Panel Editor";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+        .header {
+            height: 60px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .floating-back-btn {
+            padding: 8px 16px;
+            background-color: rgba(52, 152, 219, 0.95);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .floating-back-btn:hover {
+            background-color: rgba(41, 128, 185, 0.95);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .split-container {
+            display: flex;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+        .left-panel {
+            flex: 0 0 35%;
+            min-width: 200px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .resizer {
+            flex: 0 0 6px;
+            background-color: #e0e0e0;
+            cursor: col-resize;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+        .resizer:hover {
+            background-color: #3498db;
+        }
+        .resizer::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 3px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+        }
+        .resizer:hover::after {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: #fafafa;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-container {
+            flex: 1;
+            padding: 20px;
+            overflow: hidden;
+        }
+        #text-control-container {
+            height: 100%;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 1em;
+        }
+        .content-section {
+            margin-bottom: 25px;
+        }
+        .content-section h3 {
+            color: #2c3e50;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        .content-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .info-box {
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .info-box h4 {
+            color: #2980b9;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .info-box p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="bi bi-layout-split"></i> Split Panel Editor</h1>
+        <a href="@Url.Action("Index", "Home")" class="floating-back-btn">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Overview</span>
+        </a>
+    </div>
+
+    <div class="split-container">
+        <div class="left-panel">
+            <div class="content-section">
+                <h3>Split Panel Layout</h3>
+                <p>
+                    This layout demonstrates a resizable split-panel interface with the document editor 
+                    positioned in the right panel. The divider between panels can be dragged to adjust 
+                    the width distribution.
+                </p>
+            </div>
+
+            <div class="content-section">
+                <h3>Features</h3>
+                <ul class="feature-list">
+                    <li>Resizable panel divider</li>
+                    <li>Side-by-side content view</li>
+                    <li>Customizable panel widths</li>
+                    <li>Responsive layout</li>
+                    <li>Smooth drag interaction</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>Use Cases</h3>
+                <p>
+                    This layout is ideal for applications that need to display related content alongside 
+                    the editor, such as:
+                </p>
+                <ul class="feature-list">
+                    <li>Document properties panel</li>
+                    <li>Template selection</li>
+                    <li>Reference materials</li>
+                    <li>Navigation tree</li>
+                    <li>Form fields or metadata</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>💡 Tip</h4>
+                <p>
+                    Drag the vertical divider between the panels to adjust their relative sizes. 
+                    The layout will maintain your preferred sizing during the session.
+                </p>
+            </div>
+        </div>
+
+        <div class="resizer" id="resizer"></div>
+
+        <div class="right-panel">
+            <div class="editor-container">
+                <div id="text-control-container">
+                    @Html.TXTextControl().TextControl(settings => {
+                        settings.Dock = TXTextControl.Web.DockStyle.Fill;
+                    }).Render()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Resizable panel functionality
+        const resizer = document.getElementById('resizer');
+        const leftPanel = document.querySelector('.left-panel');
+        const rightPanel = document.querySelector('.right-panel');
+        const splitContainer = document.querySelector('.split-container');
+
+        let isResizing = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            const containerRect = splitContainer.getBoundingClientRect();
+            const newLeftWidth = e.clientX - containerRect.left;
+            const containerWidth = containerRect.width;
+            
+            // Set minimum and maximum widths as percentages
+            const minLeftWidth = containerWidth * 0.15; // 15% minimum
+            const maxLeftWidth = containerWidth * 0.70; // 70% maximum
+
+            if (newLeftWidth >= minLeftWidth && newLeftWidth <= maxLeftWidth) {
+                const leftPercentage = (newLeftWidth / containerWidth) * 100;
+                leftPanel.style.flex = `0 0 ${leftPercentage}%`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            }
+        });
+
+        // TX Text Control initialization
+        TXTextControl.addEventListener("textControlLoaded", function() {
+            console.log("TX Text Control is ready - Split Panel Mode");
+        });
+    </script>
+</body>
+</html>
